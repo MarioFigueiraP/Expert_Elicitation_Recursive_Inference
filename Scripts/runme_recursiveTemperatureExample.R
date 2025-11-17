@@ -354,7 +354,6 @@ difftime(t1,t0)
 xy_grid <- st_sample(x = st_polygon(x = list(mesh$loc[c(mesh$segm$int$idx[,1], mesh$segm$int$idx[1,1]),1:2])), size = 1E4, type = "regular")
 A_grid <- fm_basis(x = mesh, loc = xy_grid)
 
-k <- 1
 list_ggspt <- list()
 for(k in 1:4){
   u_d <- A_grid %*% summary_lf$mean[(1 + (k-1)*mesh$n):(k*mesh$n)]
@@ -419,6 +418,7 @@ grid.arrange(arrangeGrob(grobs = c(list(gg_int), gg_spt), ncol = 6))
 
 plot(list_marg[[length(list_marg)]], type = "l", col = "blue")
 lines(full_model_inla$marginals.fixed$intercept, col = "red")
+
 
 
 
