@@ -328,7 +328,7 @@ sum_wmu2 <- apply(X = df_post_musd[,seq_len(ncol(df_post_musd)/2)*2-1], MARGIN =
 diff_muwmu2 <- sum_wmu2 - mu_post^2
 sd_post <- sqrt(((apply(X = df_post_musd[,seq_len(ncol(df_post_musd)/2)*2], MARGIN = 1, FUN = function(x){sum(ws*x^2)/sum(ws)})) + diff_muwmu2))
 
-list_marg <- mclapply(X = seq_along(mu_post), mc.cores = 80, FUN = function(i_lf){
+list_marg <- mclapply(X = seq_along(mu_post), mc.cores = 60, FUN = function(i_lf){
   x_seq <- sort(unique(c(seq(from = mu_post[i_lf] - 5*sd_post[i_lf], to = mu_post[i_lf] + 5*sd_post[i_lf], length.out = 1.5E1), qnorm(p = seq(0.01, 0.99, length.out = 2.5E1), mean = mu_post[i_lf], sd = sd_post[i_lf]))))
   
   log_wpixi_post <- lapply(X = seq_len(ncol(df_post_musd)/2), FUN = function(i_ccd){log(ws[i_ccd]) + dnorm(x_seq, mean = df_post_musd[i_lf,i_ccd*2-1], sd = df_post_musd[i_lf,i_ccd*2], log = TRUE)}) %>% do.call(., what = cbind)
@@ -347,7 +347,7 @@ list_marg <- mclapply(X = seq_along(mu_post), mc.cores = 80, FUN = function(i_lf
   return(df_pix)
 })
 
-summary_lf <- mclapply(X = list_marg, mc.cores = 80, FUN = function(x){inla.zmarginal(x, silent = TRUE) %>% as.data.frame(.)}) %>% do.call(., what = rbind) %>% as.data.frame(.)
+summary_lf <- mclapply(X = list_marg, mc.cores = 60, FUN = function(x){inla.zmarginal(x, silent = TRUE) %>% as.data.frame(.)}) %>% do.call(., what = rbind) %>% as.data.frame(.)
 t1 <- Sys.time()
 difftime(t1,t0)
 
@@ -418,6 +418,7 @@ grid.arrange(arrangeGrob(grobs = c(list(gg_int), gg_spt), ncol = 6))
 
 plot(list_marg[[length(list_marg)]], type = "l", col = "blue")
 lines(full_model_inla$marginals.fixed$intercept, col = "red")
+
 
 
 
